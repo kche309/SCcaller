@@ -531,6 +531,8 @@ def get_reference_variant_allele_num(read_base):
         if i > 0 and read_base[i] in ["I", "i"] and read_base[i - 1] in [".", ","]:
             r_num -= 1
             v_num += 1
+    print("r_num: " + str(r_num))
+    print("v_num: " + str(v_num))
     return [r_num, v_num]
 
 
@@ -719,6 +721,11 @@ def get_variant_info(v_name_list, basis, read_base_with_i, should_log, geno_clas
     :return: [variant_str, ref_num, alt_num]
     """
 
+    print("get_variant_info:")
+    print("v_name_list: " + str(v_name_list))
+    print("basis: [reads, map_q, base_q] " + str(basis))
+    print("read_base_with_i: " + str(read_base_with_i))
+
     def get_reference_variant_allele_num_vcf(read_base):
         v_num = 0
         r_num = 0
@@ -730,22 +737,30 @@ def get_variant_info(v_name_list, basis, read_base_with_i, should_log, geno_clas
         return [r_num, v_num]
 
     if not v_name_list:  # is empty
+        print("return: empty")
         return ["", 0, 0]
 
     if len(v_name_list) == 1:
         r_num, v_num = get_reference_variant_allele_num_vcf(read_base_with_i)
+        tmp_result = [v_name_list[0], r_num, v_num]
+        print("return: " + str(tmp_result))
         return [v_name_list[0], r_num, v_num]
 
     if len(v_name_list) >= 2:
 
         index1, index2 = select_variants(v_name_list, basis, should_log)
         if geno_class == 2:
+            tmp_result = ["{0},{1}".format(v_name_list[index1], v_name_list[index2]),
+                    basis[0][index1],
+                    basis[0][index2]]
+            print("result: " + str(tmp_result))
             return ["{0},{1}".format(v_name_list[index1], v_name_list[index2]),
                     basis[0][index1],
                     basis[0][index2]]
         else:
             ref_num = read_base_with_i.count(".") + read_base_with_i.count(",")
-
+            tmp_result = [v_name_list[index1], ref_num, basis[0][index1]]
+            print("result: " + str(tmp_result))
             return [v_name_list[index1], ref_num, basis[0][index1]]
 
 
